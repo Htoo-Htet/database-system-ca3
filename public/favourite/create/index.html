@@ -1,0 +1,38 @@
+<html>
+
+<head>
+    <title>Favourite Management | Create New Favourite</title>
+    <link href="/main.css" rel="stylesheet" />
+    <link href="./index.css" rel="stylesheet" />
+    <script src="./index.js" type="text/javascript"></script>
+</head>
+
+<body>
+    <header>
+        <a href="../../product/">Product</a>
+        <a href="../../review/">Review</a>
+        <a href="../">Favourite</a>
+        <a href="../../cart/">Cart</a>
+        <a href="#" onclick="logout()">Logout</a>
+    </header>
+    <section>
+        <div id="review-product-main">
+            <h1>Add To Favourite</span></h1>
+            <form>
+                <fieldset>
+                    <p>
+                        <label>Product Id</label>
+                        <input type="number" name="productId" />
+                    </p>                    
+                </fieldset>
+                <div class="button-container">
+                    <button type="submit">Add</button>
+                    <button type="button" onclick="history.back()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </section>
+    <script src="../../auth.js" type="text/javascript"></script>
+</body>
+
+</html>

@@ -1,0 +1,23 @@
+table {
+    margin: 0 auto;
+}
+
+.button-add-favourite {
+    background-color: lightgreen;
+    border: 1px solid green;
+    color: darkgreen;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.button-remove-favourite {
+    background-color: lightcoral;
+    border: 1px solid red;
+    color: darkred;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}

@@ -1,0 +1,33 @@
+section {
+    height: unset;
+    margin-bottom: 20;
+}
+
+.cart-summary-main {
+    border: 1px solid black;
+    padding: 20;
+}
+
+.value {
+    font-weight: bold;
+}
+
+.button-update-cart-item {
+    background-color: lightblue;
+    border: 1px solid blue;
+    color: darkblue;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.button-delete-cart-item {
+    background-color: #ffcc80;
+    border: 1px solid #ff8c00;
+    color: #cc5200;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}

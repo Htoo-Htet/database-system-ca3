@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model favourite {
+  id        Int      @id @default(autoincrement())
+  memberId  Int      @map("member_id")
+  productId Int      @map("product_id")
+  addedOn   DateTime @default(now()) @map("added_on") @db.Timestamp(6)
+  member    member   @relation(fields: [memberId], references: [id], onDelete: Cascade, map: "fk_favourite_member")
+  product   product  @relation(fields: [productId], references: [id], onDelete: Cascade, map: "fk_favourite_product")
+}
+
+model member {
+  id                   Int         @id @default(autoincrement())
+  username             String      @unique @db.VarChar(50)
+  email                String      @unique @db.VarChar(50)
+  dob                  DateTime    @db.Date
+  password             String      @db.VarChar(255)
+  role                 Int
+  gender               String      @db.Char(1)
+  lastLoginOn          DateTime?   @default(now()) @map("last_login_on") @db.Timestamp(6)
+  clv                  Decimal?    @db.Decimal(10, 3)
+  runningTotalSpending Decimal?    @map("running_total_spending") @db.Decimal(10, 3)
+  cartItem             cartItem[]
+  favourite            favourite[]
+  memberRole           memberRole  @relation(fields: [role], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_member_role_id")
+  saleOrder            saleOrder[]
+}
+
+model memberRole {
+  id     Int      @id @default(autoincrement())
+  name   String?  @db.VarChar(25)
+  member member[]
+
+  @@map("member_role")
+}
+
+model product {
+  id             Int             @id @default(autoincrement())
+  name           String?         @db.VarChar(255)
+  description    String?
+  unitPrice      Decimal         @map("unit_price") @db.Decimal
+  stockQuantity  Decimal         @default(0) @map("stock_quantity") @db.Decimal
+  country        String?         @db.VarChar(100)
+  productType    String?         @map("product_type") @db.VarChar(50)
+  imageUrl       String?         @default("/images/product.png") @map("image_url") @db.VarChar(255)
+  manufacturedOn DateTime?       @map("manufactured_on") @db.Timestamp(6)
+  cartItem       cartItem[]
+  favourite      favourite[]
+  saleOrderItem  saleOrderItem[]
+}
+
+model review {
+  id              Int           @id @default(autoincrement())
+  saleOrderItemId Int           @map("sale_order_item_id")
+  rating          Int
+  reviewText      String        @map("review_text")
+  reviewDate      DateTime      @default(dbgenerated("CURRENT_DATE")) @map("review_date") @db.Date
+  saleOrderItem   saleOrderItem @relation(fields: [saleOrderItemId], references: [id], onDelete: Cascade, map: "fk_review_soi")
+}
+
+model saleOrder {
+  id            Int             @id @default(autoincrement())
+  memberId      Int?            @map("member_id")
+  orderDatetime DateTime        @map("order_datetime") @db.Timestamp(6)
+  status        String?         @db.VarChar(10)
+  member        member?         @relation(fields: [memberId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_sale_order_member")
+  saleOrderItem saleOrderItem[]
+
+  @@map("sale_order")
+}
+
+model saleOrderItem {
+  id          Int       @id @default(autoincrement())
+  saleOrderId Int       @map("sale_order_id")
+  productId   Int       @map("product_id")
+  quantity    Decimal   @db.Decimal
+  review      review[]
+  product     product   @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_sale_order_item_product")
+  saleOrder   saleOrder @relation(fields: [saleOrderId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_sale_order_item_sale_order")
+
+  @@map("sale_order_item")
+}
+
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
+model supplier {
+  id             Int       @id @default(autoincrement())
+  companyName    String    @map("company_name") @db.VarChar(255)
+  descriptor     String?
+  address        String?   @db.VarChar(255)
+  country        String    @db.VarChar(100)
+  contactEmail   String    @map("contact_email") @db.VarChar(50)
+  companyUrl     String?   @map("company_url") @db.VarChar(255)
+  foundedDate    DateTime? @map("founded_date") @db.Date
+  staffSize      Int?      @map("staff_size")
+  specialization String?   @db.VarChar(100)
+  isActive       Boolean?  @map("is_active")
+
+  @@index([country, isActive], map: "supplier_country_active_idx")
+  @@index([specialization, staffSize], map: "supplier_spec_size_idx")
+}
+
+model cartItem {
+  id            Int       @id @default(autoincrement())
+  memberId      Int       @map("member_id")
+  productId     Int       @map("product_id")
+  quantity      Int
+  createdOn     DateTime? @default(now()) @map("created_on") @db.Timestamp(6)
+  lastUpdatedOn DateTime? @default(now()) @updatedAt @map("last_updated_on") @db.Timestamp(6)
+  member        member    @relation(fields: [memberId], references: [id], onDelete: Cascade, map: "fk_cart_item_member")
+  product       product   @relation(fields: [productId], references: [id], onDelete: Cascade, map: "fk_cart_item_product")
+
+  @@map("cart_item")
+}
